@@ -78,12 +78,12 @@ def run():
 				r = r + 1
 			if r >= num_rows: r = 0
 
-		img.save(period + '.png')
+		img.save('/tmp/'+period + '.png')
 
 		# upload image to s3
 		s3key = period+'/' + str(time.time()) + '.png'
 		s3 = boto3.resource('s3')
-		imagedata = open(period+'.png', 'rb')
+		imagedata = open('/tmp/'+period+'.png', 'rb')
 		s3.Bucket('gbdx-service-uptime-images').put_object(Key=s3key, Body=imagedata)
 
 		# push image to slack
