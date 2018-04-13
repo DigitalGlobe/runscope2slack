@@ -12,6 +12,7 @@ runscope_bucket = os.environ.get('RUNSCOPE_BUCKET')
 slacktoken = os.environ.get('SLACK_TOKEN')
 sc = SlackClient(slacktoken)
 
+skiptitles = ['WF default domain 10 minute','WF t2medium domain 10 minute']
 
 def run():
 
@@ -22,9 +23,11 @@ def run():
 	tests = [{'name': test['name'], 'id':test['id']} for test in r.json()['data']]
 
 	# Get all metrics from runscope & average into daily & monthly uptimes
-	time_periods = ['day','month']
+	time_periods = ['day','week','month']
 	data = []
 	for test in tests:
+		if test['name'] in skiptitles:
+			continue
 		uptimes = []
 		print 'getting uptimes for %s' % test['name'] + ' ' + test['id']
 		for period in time_periods:
@@ -36,7 +39,7 @@ def run():
 			else:
 				uptime = 0
 			uptimes.append(uptime)
-		data.append({'label':test['name'],'day': round(uptimes[0]*100,3), 'month': round(uptimes[1]*100,3)})
+		data.append({'label':test['name'],'day': round(uptimes[0]*100,3), 'week': round(uptimes[1]*100,3), 'month': round(uptimes[2]*100,3)})
 
 
 
@@ -46,7 +49,9 @@ def run():
 	boxwidth = 280
 	num_columns = 3
 	num_boxes = len(data)
-	num_rows = int(math.ceil(num_boxes / 3))
+	print num_boxes
+	num_rows = int(math.ceil(float(num_boxes) / float(num_columns)))
+	print num_rows
 
 	image_height = num_rows * boxheight
 	image_width = num_columns * boxwidth
@@ -64,6 +69,7 @@ def run():
 		r = 0
 		c = 0
 		for dat in data:
+			print dat['label']
 			print dat[period]
 			if dat[period] < red_threshold:
 				color = RED
