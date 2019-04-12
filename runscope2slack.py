@@ -17,7 +17,7 @@ skiptitles = ['WF default domain 10 minute','WF t2medium domain 10 minute']
 def run():
 
 	# get list of all tests:
-	url = 'https://api.runscope.com/buckets/%s/tests?count=30' % (runscope_bucket)
+	url = 'https://api.runscope.com/buckets/%s/tests?count=50' % (runscope_bucket)
 	r = requests.get(url,headers=headers)
 
 	tests = [{'name': test['name'], 'id':test['id']} for test in r.json()['data']]
