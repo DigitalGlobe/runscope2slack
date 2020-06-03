@@ -1,4 +1,4 @@
 requests
 Pillow
 boto3
-slackclient
+slackclient==2.7.0
